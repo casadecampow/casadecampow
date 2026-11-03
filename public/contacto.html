@@ -20,10 +20,15 @@
 <meta name="twitter:image" content="https://www.casadecampow.com/images/hero-portada.jpg">
 
 <title>Contacto y Disponibilidad | Casa de Campo W, Cieneguilla</title>
-<link rel="stylesheet" href="/css/calendar.css">
+<link rel="preload" href="/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/cormorant-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/css/calendar.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/css/calendar.css"></noscript>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600;700&display=swap');
+  @font-face{ font-family:'Cormorant Garamond'; font-style:normal; font-weight:400 600; font-display:swap; src:url(/fonts/cormorant-latin.woff2) format('woff2'); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face{ font-family:'Cormorant Garamond'; font-style:italic; font-weight:400 500; font-display:swap; src:url(/fonts/cormorant-italic-latin.woff2) format('woff2'); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face{ font-family:'Montserrat'; font-style:normal; font-weight:400 700; font-display:swap; src:url(/fonts/montserrat-latin.woff2) format('woff2'); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
 
   :root{
     --bg: #FAF6F1;
@@ -88,6 +93,9 @@
 
   .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 28px; }
   section{ scroll-margin-top: 76px; }
+
+  .vh{ position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+  .bg-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
 
   /* ---------- placeholder photography ---------- */
   .ph{
@@ -556,11 +564,11 @@
     </div>
     <a href="/galeria.html">Galería</a>
     <a href="/faq.html">Preguntas frecuentes</a>
-    <a href="#contacto">Contacto</a>
+    <a href="/contacto.html">Contacto</a>
   </nav>
   <a class="btn btn-outline nav-cta" href="/contacto.html">Consultar</a>
 </header>
-<section class="page-head" style="background-image:url('/images/hero-portada.jpg'); background-size:cover; background-position:center 55%;">
+<section class="page-head"><img class="bg-img" src="/images/hero-portada.webp" srcset="/images/hero-portada-640.webp 640w, /images/hero-portada.webp 1376w" sizes="100vw" alt="Mesas redondas decoradas para una celebración al atardecer en un jardín con luces colgantes" loading="lazy" decoding="async" style="object-position:center 55%">
   <div class="head-content">
     <p class="eyebrow">Contacto</p>
     <h1>Hablemos de tu evento</h1>
@@ -573,6 +581,7 @@
   <div class="wrap">
     <div class="contact-grid">
       <div class="info-card">
+        <h2 class="vh">Datos de contacto</h2>
         <div class="info-row">
           <div class="ic"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><path d="M12 21s7-7.5 7-12a7 7 0 10-14 0c0 4.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
           <div><h3>Dirección</h3><p>Nueva Toledo Lote 107, Cieneguilla 15593, Perú</p><p style="margin-top:6px;"><a href="https://share.google/HNbNcnv4BnMB1YyHm" target="_blank" rel="noopener" style="color:var(--gold-deep); font-weight:700; font-size:13px; text-decoration:none;">Ver en Google Maps →</a></p></div>
@@ -611,7 +620,7 @@
           <h2 style="font-size:26px;">Consulta la disponibilidad</h2>
           <p style="font-size:13.5px; margin-top:6px;">Revisa qué fechas están libres y escríbenos por WhatsApp para coordinar tu evento.</p>
         </div>
-        <div id="cal-contacto"></div>
+        <div id="cal-contacto" style="min-height:540px"></div>
       </div>
     </div>
   </div>
@@ -656,7 +665,15 @@
 <a class="wa-float" href="https://wa.me/51904956522" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
   <svg viewBox="0 0 32 32"><path d="M16.02 3C9.4 3 4 8.4 4 15.02c0 2.49.72 4.8 1.98 6.75L4 29l7.42-1.94a11.95 11.95 0 004.6.93h.01c6.62 0 12.02-5.4 12.02-12.02C28.05 8.4 22.65 3 16.02 3zm0 21.9c-1.5 0-2.96-.4-4.24-1.16l-.3-.18-4.4 1.15 1.18-4.29-.2-.31a9.86 9.86 0 01-1.52-5.29c0-5.47 4.45-9.92 9.93-9.92 2.65 0 5.14 1.04 7.02 2.92a9.85 9.85 0 012.9 7.01c0 5.47-4.45 9.07-9.37 9.07zm5.44-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.04-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
 </a>
-<script src="/js/calendar.js"></script>
-<script>initAvailabilityCalendar("#cal-contacto", { readOnly: true });</script>
+<script src="/js/calendar.js" defer></script>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  var el=document.getElementById("cal-contacto"); if(!el) return;
+  var done=false;
+  var run=function(){ if(done) return; done=true; initAvailabilityCalendar("#cal-contacto", { readOnly: true }); };
+  if("IntersectionObserver" in window){ new IntersectionObserver(function(e,o){ if(e[0].isIntersecting){ o.disconnect(); run(); } },{rootMargin:"600px"}).observe(el); }
+  window.addEventListener("load",function(){ setTimeout(run,3000); });
+});
+</script>
 </body>
 </html>

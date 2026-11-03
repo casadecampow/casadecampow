@@ -76,7 +76,21 @@ app.post('/api/admin/toggle', (req, res) => {
   res.json({ ok: true, date, occupied });
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+const DAY = 86400;
+app.use(express.static(path.join(__dirname, 'public'), {
+  etag: true,
+  setHeaders(res, filePath) {
+    if (/\.(woff2|woff)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', `public, max-age=${DAY * 365}, immutable`);
+    } else if (/\.(webp|jpe?g|png|svg|ico)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', `public, max-age=${DAY * 30}`);
+    } else if (/\.(css|js)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', `public, max-age=${DAY}, must-revalidate`);
+    } else if (/\.html$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    }
+  },
+}));
 
 app.listen(PORT, () => {
   console.log(`Casa W corriendo en http://localhost:${PORT}`);

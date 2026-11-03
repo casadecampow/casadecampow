@@ -20,10 +20,13 @@
 <meta name="twitter:image" content="https://www.casadecampow.com/images/jardin-noche.jpg">
 
 <title>Historias y Novedades | Casa de Campo W, Cieneguilla</title>
-<link rel="stylesheet" href="/css/calendar.css">
+<link rel="preload" href="/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/cormorant-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600;700&display=swap');
+  @font-face{ font-family:'Cormorant Garamond'; font-style:normal; font-weight:400 600; font-display:swap; src:url(/fonts/cormorant-latin.woff2) format('woff2'); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face{ font-family:'Cormorant Garamond'; font-style:italic; font-weight:400 500; font-display:swap; src:url(/fonts/cormorant-italic-latin.woff2) format('woff2'); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face{ font-family:'Montserrat'; font-style:normal; font-weight:400 700; font-display:swap; src:url(/fonts/montserrat-latin.woff2) format('woff2'); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
 
   :root{
     --bg: #FAF6F1;
@@ -88,6 +91,8 @@
 
   .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 28px; }
   section{ scroll-margin-top: 76px; }
+
+  .bg-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
 
   /* ---------- placeholder photography ---------- */
   .ph{
@@ -469,7 +474,7 @@
   .blog-card{ display:flex; flex-direction:column; text-decoration:none; color:var(--ink); }
   .blog-card .ph{ height:190px; border-radius:12px; margin-bottom:16px; }
   .blog-card .cat{ font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--gold-deep); font-weight:700; margin-bottom:8px; }
-  .blog-card h4{ font-size:19px; margin-bottom:8px; }
+  .blog-card h2{ font-size:19px; margin-bottom:8px; }
   .blog-card p{ font-size:13.5px; color:var(--muted); margin:0 0 10px; }
   .blog-card .meta{ font-size:11.5px; color:var(--muted); }
 
@@ -560,7 +565,7 @@
   </nav>
   <a class="btn btn-outline nav-cta" href="/contacto.html">Consultar</a>
 </header>
-<section class="page-head" style="background-image:url('/images/jardin-noche.jpg'); background-size:cover; background-position:center 55%;">
+<section class="page-head"><img class="bg-img" src="/images/jardin-noche.webp" srcset="/images/jardin-noche-640.webp 640w, /images/jardin-noche.webp 1024w" sizes="100vw" alt="Mesas largas de madera con luces colgantes en un jardín al anochecer" loading="lazy" decoding="async" style="object-position:center 55%">
   <div class="head-content">
     <p class="eyebrow">Historias</p>
     <h1>Historias y novedades</h1>
@@ -574,44 +579,44 @@
     <p class="disclaimer-banner">Ejemplo — títulos y textos por redactar con el equipo de Casa W.</p>
     <div class="blog-grid" style="margin-top:40px;">
       <a class="blog-card" href="#">
-        <div class="ph ph"><div class="ph-tag"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg>Foto pendiente</div></div>
+        <div class="ph ph"><img class="bg-img" src="/images/parrilla.webp" srcset="/images/parrilla-640.webp 640w, /images/parrilla.webp 1024w" sizes="(max-width:900px) 100vw, 33vw" alt="Parrilla al carbón con carnes en una zona de comidas al aire libre" loading="lazy" decoding="async" style="object-position:center 50%"></div>
         <span class="cat">Reuniones</span>
-        <h4>5 ideas para tu próxima parrillada familiar</h4>
+        <h2>5 ideas para tu próxima parrillada familiar</h2>
         <p>Desde la hora ideal hasta cómo armar el menú: algunas ideas para que tu reunión familiar en Casa W salga redonda.</p>
         <span class="meta">2 sept 2026 · Leer más →</span>
       </a>
       <a class="blog-card" href="#">
-        <div class="ph ph-5"><div class="ph-tag"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg>Foto pendiente</div></div>
+        <div class="ph ph-5"><img class="bg-img" src="/images/bodas-2.webp" srcset="/images/bodas-2-640.webp 640w, /images/bodas-2-1280.webp 1280w, /images/bodas-2.webp 1400w" sizes="(max-width:900px) 100vw, 33vw" alt="Novios frente a un arco de flores durante una ceremonia al aire libre en Casa de Campo W" loading="lazy" decoding="async" style="object-position:center 50%"></div>
         <span class="cat">Bodas</span>
-        <h4>Cómo elegir el local ideal para tu boda en Cieneguilla</h4>
+        <h2>Cómo elegir el local ideal para tu boda en Cieneguilla</h2>
         <p>Aforo, luz natural, accesos — las preguntas que debes hacer antes de reservar el lugar de tu boda.</p>
         <span class="meta">28 ago 2026 · Leer más →</span>
       </a>
       <a class="blog-card" href="#">
-        <div class="ph ph-2"><div class="ph-tag"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg>Foto pendiente</div></div>
+        <div class="ph ph-2"><img class="bg-img" src="/images/integracion.webp" srcset="/images/integracion-640.webp 640w, /images/integracion-1280.webp 1280w, /images/integracion.webp 1920w" sizes="(max-width:900px) 100vw, 33vw" alt="Evento de integración de una empresa al aire libre en Casa de Campo W, con zona de networking y salas lounge" loading="lazy" decoding="async" style="object-position:center 50%"></div>
         <span class="cat">Integración</span>
-        <h4>Detrás de cámaras: una integración de equipo en Casa W</h4>
-        <p>Así se vivió una jornada de team building al aire libre, entre juegos, parrilla y jardín.</p>
+        <h2>Detrás de cámaras: una integración de equipo en Casa W</h2>
+        <p>Así se vivió una jornada de team building al aire libre, entre dinámicas de equipo, parrilla y jardín.</p>
         <span class="meta">15 ago 2026 · Leer más →</span>
       </a>
       <a class="blog-card" href="#">
-        <div class="ph ph-3"><div class="ph-tag"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg>Foto pendiente</div></div>
+        <div class="ph ph-3"><img class="bg-img" src="/images/disponibilidad.webp" srcset="/images/disponibilidad-640.webp 640w, /images/disponibilidad-1280.webp 1280w, /images/disponibilidad.webp 1920w" sizes="(max-width:900px) 100vw, 33vw" alt="Cena en mesa larga bajo una carpa en el jardín de Casa de Campo W al atardecer" loading="lazy" decoding="async" style="object-position:center 50%"></div>
         <span class="cat">Consejos</span>
-        <h4>7 preguntas que debes hacerle a tu local de eventos</h4>
+        <h2>7 preguntas que debes hacerle a tu local de eventos</h2>
         <p>Una checklist rápida para no llevarte sorpresas al momento de cotizar tu evento.</p>
         <span class="meta">30 jul 2026 · Leer más →</span>
       </a>
       <a class="blog-card" href="#">
-        <div class="ph ph-4"><div class="ph-tag"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg>Foto pendiente</div></div>
+        <div class="ph ph-4"><img class="bg-img" src="/images/ferias.webp" srcset="/images/ferias-640.webp 640w, /images/ferias-1280.webp 1280w, /images/ferias.webp 1920w" sizes="(max-width:900px) 100vw, 33vw" alt="Feria de artesanías y gastronomía al aire libre en Casa de Campo W, con stands y visitantes" loading="lazy" decoding="async" style="object-position:center 50%"></div>
         <span class="cat">Ferias</span>
-        <h4>Ferias y emprendimiento: por qué Cieneguilla es un buen escenario</h4>
+        <h2>Ferias y emprendimiento: por qué Cieneguilla es un buen escenario</h2>
         <p>Espacio abierto, fácil acceso y buen clima — lo que buscan los organizadores de ferias.</p>
         <span class="meta">18 jul 2026 · Leer más →</span>
       </a>
       <a class="blog-card" href="#">
-        <div class="ph ph"><div class="ph-tag"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.2"/><path d="M8 6l1.5-2h5L16 6"/></svg>Foto pendiente</div></div>
+        <div class="ph ph"><img class="bg-img" src="/images/historia.webp" srcset="/images/historia-640.webp 640w, /images/historia-1280.webp 1280w, /images/historia.webp 1600w" sizes="(max-width:900px) 100vw, 33vw" alt="Almuerzo familiar con mesa larga y picnic en el jardín de Casa de Campo W al atardecer" loading="lazy" decoding="async" style="object-position:center 50%"></div>
         <span class="cat">Nosotros</span>
-        <h4>La historia detrás de Casa W</h4>
+        <h2>La historia detrás de Casa W</h2>
         <p>De sueño familiar a espacio abierto para todos: así nació Casa W.</p>
         <span class="meta">5 jul 2026 · Leer más →</span>
       </a>
