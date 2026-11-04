@@ -2,11 +2,21 @@
   const WA_NUMBER = '51904956522';
   const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const DIAS = ['D','L','M','X','J','V','S'];
+  const TIPOS_CORTO = { boda: 'Boda', corporativo: 'Corp.', integracion: 'Integ.', concierto: 'Conc.', feria: 'Feria', otro: 'Otro' };
 
   function pad(n) { return String(n).padStart(2, '0'); }
   function toKey(d) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
   function fmtLarga(d) { return `${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`; }
   function startOfToday() { const t = new Date(); t.setHours(0, 0, 0, 0); return t; }
+  function fromKey(key) { const [y, m, d] = key.split('-').map(Number); return new Date(y, m - 1, d); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function fmtCuando(iso) {
+    try {
+      return new Date(iso).toLocaleString('es-PE', { timeZone: 'America/Lima', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+    } catch (e) { return ''; }
+  }
 
   function initAvailabilityCalendar(selector, opts) {
     opts = opts || {};
@@ -19,6 +29,10 @@
     let viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
     let occupied = new Set();
     let isAdmin = false;
+    let adminUser = '';
+    let details = {};
+    let history = [];
+    let types = {};
     let selected = null;
     let adminFormOpen = !!opts.autoOpenAdmin;
 
@@ -52,6 +66,10 @@
         const data = await r.json();
         occupied = new Set(data.occupied || []);
         isAdmin = readOnly ? false : !!data.isAdmin;
+        adminUser = isAdmin ? (data.user || '') : '';
+        details = isAdmin ? (data.details || {}) : {};
+        history = isAdmin ? (data.history || []) : [];
+        types = isAdmin ? (data.types || {}) : {};
       } catch (e) {
         occupied = new Set();
       }
@@ -81,17 +99,54 @@
         if (isToday) classes.push('is-today');
         if (isAdmin && !isPast) classes.push('is-admin');
         if (selected === key) classes.push('is-selected');
-        cells += `<div class="${classes.join(' ')}" data-date="${isPast ? '' : key}">${d}</div>`;
+        const det = isAdmin && isBusy ? details[key] : null;
+        const tag = det ? `<small class="avail-tag">${esc(TIPOS_CORTO[det.type] || '')}</small>` : '';
+        const title = det ? ` title="${esc((types[det.type] || det.type) + ' — ' + det.by)}"` : '';
+        cells += `<div class="${classes.join(' ')}" data-date="${isPast ? '' : key}"${title}>${d}${tag}</div>`;
       }
       grid.innerHTML = cells;
     }
 
     function renderSelected() {
       if (!selected) { selectedSlot.innerHTML = ''; return; }
-      const [y, m, d] = selected.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
+      const date = fromKey(selected);
       const isBusy = occupied.has(selected);
-      if (isAdmin) { selectedSlot.innerHTML = ''; return; }
+
+      if (isAdmin) {
+        if (isBusy) {
+          const det = details[selected];
+          const info = det
+            ? `<dl>
+                <div><dt>Tipo</dt><dd>${esc(types[det.type] || det.type)}</dd></div>
+                <div><dt>Cerrada por</dt><dd>${esc(det.by)}</dd></div>
+                <div><dt>Registrada</dt><dd>${esc(fmtCuando(det.at))}</dd></div>
+              </dl>`
+            : `<p class="avail-panel-note">Sin registro: esta fecha se cerró antes de que existieran las cuentas del equipo.</p>`;
+          selectedSlot.innerHTML = `
+            <div class="avail-panel">
+              <p class="avail-panel-title">Ocupada — <strong>${fmtLarga(date)}</strong></p>
+              ${info}
+              <button type="button" class="avail-btn avail-btn-light" data-release>Liberar fecha</button>
+              <div class="avail-admin-msg" data-panel-msg></div>
+            </div>`;
+        } else {
+          const opciones = Object.keys(types).map(k => `<option value="${esc(k)}">${esc(types[k])}</option>`).join('');
+          selectedSlot.innerHTML = `
+            <div class="avail-panel">
+              <p class="avail-panel-title">Cerrar <strong>${fmtLarga(date)}</strong></p>
+              <label class="avail-panel-label" for="avail-type">¿Para qué evento?</label>
+              <select id="avail-type" data-type>
+                <option value="" selected disabled>Elige el tipo de evento…</option>
+                ${opciones}
+              </select>
+              <p class="avail-panel-note">Se registrará a nombre de <strong>${esc(adminUser)}</strong>.</p>
+              <button type="button" class="avail-btn" data-close>Marcar como ocupada</button>
+              <div class="avail-admin-msg" data-panel-msg></div>
+            </div>`;
+        }
+        return;
+      }
+
       if (isBusy) { selectedSlot.innerHTML = ''; return; }
       const msg = encodeURIComponent(`Hola! Quisiera consultar disponibilidad para el ${fmtLarga(date)}.`);
       selectedSlot.innerHTML = `
@@ -101,20 +156,32 @@
         </div>`;
     }
 
+    function renderHistory() {
+      if (!history.length) return '';
+      const rows = history.map(h => {
+        const f = h.date ? fmtLarga(fromKey(h.date)) : '';
+        const t = h.type ? ` (${esc(types[h.type] || h.type)})` : '';
+        return `<li><span>${esc(fmtCuando(h.at))}</span> ${esc(h.by)} ${esc(h.action)} el ${esc(f)}${t}</li>`;
+      }).join('');
+      return `<div class="avail-history"><p>Actividad reciente</p><ul>${rows}</ul></div>`;
+    }
+
     function renderAdminBar() {
       if (readOnly) { adminBar.innerHTML = ''; return; }
       if (isAdmin) {
         adminBar.innerHTML = `
-          <span class="avail-admin-active">Modo administrador — toca una fecha para marcarla</span>
+          <span class="avail-admin-active">Sesión de ${esc(adminUser)} — toca una fecha para cerrarla o ver sus datos</span>
+          ${renderHistory()}
           <div style="margin-top:10px;"><button type="button" class="link" data-admin-logout>Cerrar sesión</button></div>`;
         return;
       }
       if (!adminFormOpen) {
-        adminBar.innerHTML = `<button type="button" class="link" data-admin-open>Acceso administrador</button>`;
+        adminBar.innerHTML = `<button type="button" class="link" data-admin-open>Acceso del equipo</button>`;
         return;
       }
       adminBar.innerHTML = `
         <div class="avail-admin-form">
+          <input type="text" placeholder="Usuario" data-admin-user autocomplete="username" autocapitalize="none" spellcheck="false">
           <input type="password" placeholder="Contraseña" data-admin-pass autocomplete="current-password">
           <button type="button" data-admin-submit>Entrar</button>
         </div>
@@ -125,6 +192,21 @@
       renderMonth();
       renderSelected();
       renderAdminBar();
+    }
+
+    function showPanelMsg(text, cls) {
+      const el = root.querySelector('[data-panel-msg]');
+      if (el) { el.textContent = text; el.className = 'avail-admin-msg ' + (cls || 'error'); }
+    }
+
+    async function post(url, body) {
+      const r = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      let data = {};
+      try { data = await r.json(); } catch (e) { /* respuesta sin cuerpo */ }
+      return data;
     }
 
     root.addEventListener('click', async (e) => {
@@ -141,18 +223,37 @@
       if (dayEl && dayEl.dataset.date) {
         const key = dayEl.dataset.date;
         if (isAdmin) {
-          const r = await fetch('/api/admin/toggle', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date: key }),
-          });
-          const data = await r.json();
-          if (data.ok) {
-            if (data.occupied) occupied.add(key); else occupied.delete(key);
-            render();
-          }
+          selected = key;
+          render();
         } else if (!occupied.has(key)) {
           selected = key;
           render();
+        }
+        return;
+      }
+
+      if (e.target.closest('[data-close]')) {
+        const type = (root.querySelector('[data-type]') || {}).value;
+        if (!type) { showPanelMsg('Elige el tipo de evento antes de marcar la fecha.'); return; }
+        const data = await post('/api/admin/close', { date: selected, type });
+        if (data.ok) {
+          await fetchState();
+          render();
+        } else {
+          showPanelMsg(data.error || 'No se pudo marcar la fecha.');
+          if (data.error && /ocupada/i.test(data.error)) { await fetchState(); render(); }
+        }
+        return;
+      }
+
+      if (e.target.closest('[data-release]')) {
+        const data = await post('/api/admin/release', { date: selected });
+        if (data.ok) {
+          selected = null;
+          await fetchState();
+          render();
+        } else {
+          showPanelMsg(data.error || 'No se pudo liberar la fecha.');
         }
         return;
       }
@@ -164,17 +265,14 @@
       }
 
       if (e.target.closest('[data-admin-submit]')) {
-        const input = root.querySelector('[data-admin-pass]');
+        const userInput = root.querySelector('[data-admin-user]');
+        const passInput = root.querySelector('[data-admin-pass]');
         const msgEl = root.querySelector('[data-admin-msg]');
-        const r = await fetch('/api/admin/login', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: input.value }),
-        });
-        const data = await r.json();
+        const data = await post('/api/admin/login', { username: userInput.value, password: passInput.value });
         if (data.ok) {
-          isAdmin = true;
           adminFormOpen = false;
           selected = null;
+          await fetchState();
           render();
         } else if (msgEl) {
           msgEl.textContent = data.error || 'Error';
@@ -186,13 +284,17 @@
       if (e.target.closest('[data-admin-logout]')) {
         await fetch('/api/admin/logout', { method: 'POST' });
         isAdmin = false;
+        adminUser = '';
+        details = {};
+        history = [];
+        selected = null;
         render();
         return;
       }
     });
 
     root.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.target.matches('[data-admin-pass]')) {
+      if (e.key === 'Enter' && e.target.matches('[data-admin-pass], [data-admin-user]')) {
         root.querySelector('[data-admin-submit]').click();
       }
     });
